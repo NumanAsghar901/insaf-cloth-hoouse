@@ -1,0 +1,225 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Insaf Cloth House</title>
+<style>
+:root{--g:#0f3d24;--g2:#1f6b3f;--gold:#b08d3c;--bg:#f3efe3;--line:#d9d2bd}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:#222}
+header{background:#f8f4e8;border-bottom:4px solid var(--gold);padding:6px 18px;display:flex;align-items:center;justify-content:space-between}
+header img{height:62px}
+.brand{flex:1;text-align:center;font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:700;letter-spacing:1px;color:var(--g)}
+.msg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:99}
+.msgbox{background:#fff;padding:18px 22px;border-radius:8px;min-width:280px;max-width:480px;box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.banner{display:none;background:#fff3cd;border-bottom:1px solid #e0c36a;padding:8px 18px;font-weight:600}
+nav{display:flex;flex-wrap:wrap;gap:4px;background:var(--g);padding:8px 10px 0}
+nav button{padding:10px 18px;border:0;border-radius:6px 6px 0 0;background:#2f6a4a;color:#fff;cursor:pointer;font-weight:600}
+nav button.on{background:var(--bg);color:var(--g)}
+main{padding:16px}.tab{display:none}.tab.on{display:block}
+.box{background:#fff;padding:12px 14px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+table{border-collapse:collapse;width:100%;background:#fff;border:1px solid var(--line)}
+th{background:var(--g);color:#fff;position:sticky;top:0}
+td,th{border:1px solid var(--line);padding:6px 10px;text-align:left}
+tbody tr:nth-child(even){background:#faf8f1}tbody tr:hover{background:#f1ecd8}
+input,select{padding:7px;margin:2px;border:1px solid #bdb59a;border-radius:5px}
+button{border-radius:5px}
+button.a{padding:8px 16px;background:var(--g);color:#fff;border:0;cursor:pointer;font-weight:600}
+button.a:hover{background:var(--g2)}
+.row{display:flex;gap:16px}
+.big{font-size:26px;font-weight:700;color:var(--g)}
+#rep .box{border-top:4px solid var(--gold)}
+.warn{background:#fde4e1!important}.neg{color:#c00}
+.scroll{max-height:64vh;overflow:auto;border:1px solid var(--line);border-radius:6px}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+#receipt{display:none}
+@media print{body>*:not(#receipt){display:none!important}#receipt{display:block;width:76mm;font:11px monospace;color:#000}
+#receipt th{background:#fff;color:#000;position:static;border:0;border-bottom:1px dashed #000;padding:1px 2px;text-align:left}
+#receipt table{width:100%}#receipt td{border:0;padding:1px 2px;background:#fff}}
+</style></head><body>
+<div id="login" style="position:fixed;inset:0;background:#0f3d24;display:flex;align-items:center;justify-content:center;z-index:9">
+ <div class="box" style="width:300px"><img src="/logo.png" style="width:100%;max-width:230px;display:block;margin:0 auto 8px"><input id="l-user" placeholder="Username" style="width:92%"><br>
+ <input id="l-pass" type="password" placeholder="Password" style="width:92%" onkeydown="if(event.key=='Enter')login()"><br><br>
+ <button class="a" onclick="login()">Login</button></div></div>
+<header><img src="/logo.png" alt="Insaf Cloth House"><div class="brand">Insaf Cloth House</div><span style="font-size:15px"><b id="who"></b> <button onclick="logout()">Logout</button></span></header>
+<div class="banner" id="banner"></div>
+<nav id="nav"></nav><main>
+<div class="tab" id="t-billing">
+ <div class="row"><div style="flex:2">
+  <input id="code" placeholder="Item code / name (Enter)" size="30" autofocus>
+  <table><thead><tr><th>Code</th><th>Item</th><th>Qty</th><th>Price</th><th>Discount</th><th>Total</th><th></th></tr></thead><tbody id="cart"></tbody></table>
+ </div><div style="flex:1" class="box">
+  <div>Sub total</div><div class="big" id="sub">0</div>
+  <div>Discount</div><div class="big" id="disc">0</div>
+  <div>Payable</div><div class="big" id="tot">0</div>
+  <p>Paid <input id="paid" type="number" style="width:100px"></p>
+  <div>Change</div><div class="big" id="chg">0</div><br>
+  <button class="a" onclick="checkout()">Checkout (F9)</button> <button class="a" onclick="cart=[];drawCart()">Clear</button>
+ </div></div></div>
+<div class="tab" id="t-products">
+ <div class="box"><b>Add item</b><br>
+  <input id="p-code" placeholder="Code"><input id="p-name" placeholder="Name">
+  <select id="p-gender"><option>Men</option><option>Women</option></select>
+  <select id="p-form"><option>Stitched</option><option>Unstitched</option></select>
+  <select id="p-unit"><option value="piece">per piece</option><option value="meter">per meter</option></select>
+  <input id="p-cost" type="number" placeholder="Cost" style="width:80px"><input id="p-price" type="number" placeholder="Price" style="width:80px">
+  <input id="p-th" type="number" placeholder="Alert at" style="width:80px"><select id="p-sup"></select>
+  <button class="a" onclick="addProduct()">Add</button></div>
+ <table><thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Unit</th><th>Cost</th><th>Price</th><th>Stock</th><th>Alert at</th><th>Supplier</th><th></th></tr></thead><tbody id="plist"></tbody></table></div>
+<div class="tab" id="t-stock">
+ <div class="box"><b>Receive stock</b><br><select id="s-prod"></select><select id="s-sup"></select>
+  <input id="s-qty" type="number" placeholder="Qty (whole no. for pieces)"><input id="s-cost" type="number" placeholder="Cost per unit">
+  <button class="a" onclick="addStock()">Add stock</button></div>
+ <div class="box"><b>Remove stock</b> (damaged, lost, correction)<br><select id="r-prod"></select>
+  <input id="r-qty" type="number" step="0.01" placeholder="Qty (whole no. for pieces)"><input id="r-why" placeholder="Reason" size="25">
+  <button class="a" onclick="removeStock()">Remove</button></div>
+ <div class="box"><b>Low stock alerts</b><table><thead><tr><th>Item</th><th>Left</th><th>Alert at</th><th>Buy from</th><th>Phone</th></tr></thead><tbody id="low"></tbody></table></div></div>
+<div class="tab" id="t-suppliers">
+ <div class="box"><input id="u-name" placeholder="Name"><input id="u-phone" placeholder="Phone"><input id="u-addr" placeholder="Address" size="30">
+  <button class="a" onclick="addSupplier()">Add supplier</button></div>
+ <table><thead><tr><th>Name</th><th>Phone</th><th>Address</th><th></th></tr></thead><tbody id="ulist"></tbody></table></div>
+<div class="tab" id="t-daily"><div class="box">From <input type="date" id="d-from"> To <input type="date" id="d-to"> <button class="a" onclick="loadDaily()">Show</button> <span style="color:#666">(blank dates = last 30 days)</span> <b id="d-sum" style="margin-left:12px"></b></div>
+ <div class="scroll"><table><thead><tr><th>Date</th><th>Bills</th><th>Sold (worth)</th><th>Refunded</th><th>Net sales</th><th>Cost of net stock</th></tr></thead><tbody id="daily"></tbody></table></div></div>
+<div class="tab" id="t-buys"><div class="box">From <input type="date" id="b-from"> To <input type="date" id="b-to"> <button class="a" onclick="loadBuys()">Show</button> <span style="color:#666">(blank dates = last 30 days)</span> <b id="b-sum" style="margin-left:12px"></b></div>
+ <div class="scroll"><table><thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Cost/unit</th><th>Amount</th><th>Supplier</th></tr></thead><tbody id="buys"></tbody></table></div></div>
+<div class="tab" id="t-refs"><div class="box">From <input type="date" id="r-from"> To <input type="date" id="r-to"> <button class="a" onclick="loadRefs()">Show</button> <span style="color:#666">(blank dates = last 30 days)</span> <b id="r-sum" style="margin-left:12px"></b></div>
+ <div class="scroll"><table><thead><tr><th>Date</th><th>Bill #</th><th>Item</th><th>Qty</th><th>Amount</th><th>By</th></tr></thead><tbody id="refs"></tbody></table></div></div>
+<div class="tab" id="t-backup"><div class="box"><b>Automatic backup</b>
+ <p>The app backs up the database every 3 hours and shortly after it starts, to two places:</p>
+ <p><b>1. This PC:</b> <span id="bk-local"></span> <i>(protects against corruption, not against a dead disk)</i></p>
+ <p><b>2. Cloud folder:</b> pick a folder that syncs to the cloud (Google Drive for desktop, OneDrive or Dropbox). This is what protects you if the SSD fails.</p>
+ <input id="bk-dir" size="55" placeholder="e.g. C:\Users\Shop\OneDrive\POS-Backups"> <button id="bk-pick" onclick="pickDir()">Browse...</button>
+ <button class="a" onclick="saveBk()">Save folder &amp; back up</button> <button class="a" onclick="runBk()">Backup now</button>
+ <p>Last backup: <b id="bk-last"></b></p></div>
+ <div class="box"><b>How to restore after a failure</b><ol><li>Install the app on the new/repaired PC and open it once, then close it.</li>
+ <li>Copy the newest backup file (shop-DATE.db) from the cloud folder into <code>C:\Users\&lt;name&gt;\AppData\Roaming\Garments POS\</code></li>
+ <li>Delete any old <code>shop.db</code>, <code>shop.db-wal</code>, <code>shop.db-shm</code> there, then rename the copied file to <code>shop.db</code>. Open the app.</li></ol></div></div>
+<div class="tab" id="t-refund">
+ <div class="box"><b>Refund / reprint receipt</b><br><input id="rf-bill" type="number" placeholder="Bill number"> <button class="a" onclick="loadBill()">Load bill</button></div>
+ <div id="rf-area"></div></div>
+<div class="tab" id="t-users">
+ <div class="box"><b>Shop name</b> (printed on receipts)<br><input id="shop-name" size="30"><button class="a" onclick="saveShop()">Save</button></div>
+ <div class="box"><b>Add cashier</b><br><input id="n-user" placeholder="Username"><input id="n-pass" placeholder="Password (min 6)">
+  <button class="a" onclick="addUser()">Create cashier</button></div>
+  <div class="box"><b>Change my username</b><br><input id="new-uname" placeholder="New username"><button class="a" onclick="changeName()">Change</button></div>
+ <div class="box"><b>Change my password</b><br><input id="o-pass" type="password" placeholder="Old password"><input id="m-pass" type="password" placeholder="New (min 6)">
+  <button class="a" onclick="changePw()">Change</button></div>
+ <table><thead><tr><th>Username</th><th>Role</th><th></th></tr></thead><tbody id="ulist2"></tbody></table></div>
+<div class="tab" id="t-reports">
+ <select id="period" onchange="loadReport()"><option value="week">Last 7 days</option><option value="month">This month</option></select>
+ <div class="row" id="rep"></div><div class="box"><b>Best sellers</b><ul id="top"></ul></div>
+</div>
+</main><div id="receipt"></div>
+<script>
+const $=id=>document.getElementById(id);
+let T=sessionStorage.getItem('t'),ROLE=sessionStorage.getItem('r'),UN=sessionStorage.getItem('u');
+const api=async(u,m='GET',b)=>{const r=await fetch('/api'+u,{method:m,headers:{'Content-Type':'application/json',Authorization:'Bearer '+T},body:b?JSON.stringify(b):undefined});
+ const j=await r.json();if(r.status==401&&u!='/login'){logout(true);throw 'auth'}if(!r.ok){alert(j.error);throw j.error}return j};
+async function login(){const r=await api('/login','POST',{username:$('l-user').value,password:$('l-pass').value});
+ T=r.token;ROLE=r.role;UN=r.username;sessionStorage.setItem('t',T);sessionStorage.setItem('r',ROLE);sessionStorage.setItem('u',UN);
+ $('l-pass').value='';init();if(r.defaultPw){alert('You are using the default admin password. Please change it now in the Users tab.');show('users')}}
+async function logout(skip){if(!skip&&T)try{await api('/logout','POST')}catch(e){}
+ T=ROLE=UN=null;sessionStorage.clear();$('login').style.display='flex'}
+async function addUser(){await api('/users','POST',{username:$('n-user').value,password:$('n-pass').value});$('n-user').value=$('n-pass').value='';loadUsers()}
+async function changePw(){await api('/change-password','POST',{old:$('o-pass').value,new:$('m-pass').value});$('o-pass').value=$('m-pass').value='';alert('Password changed')}
+async function changeName(){const r=await api('/change-username','POST',{username:$('new-uname').value});UN=r.username;sessionStorage.setItem('u',UN);$('who').textContent=UN+' ('+ROLE+')';$('new-uname').value='';alert('Username changed. Use "'+UN+'" the next time you log in.');loadUsers()}
+async function loadUsers(){const u=await api('/users');$('shop-name').value=(await api('/shop')).name;$('ulist2').innerHTML=u.map(x=>`<tr><td>${x.username}</td><td>${x.role}</td><td>${x.role=='cashier'?`<button onclick="resetPw(${x.id})">Reset password</button> <button onclick="delUser(${x.id})">Delete</button>`:''}</td></tr>`).join('')}
+async function resetPw(id){const p=prompt('New password (min 6 characters):');if(p){await api('/users/'+id+'/password','PUT',{password:p});alert('Password updated')}}
+async function delUser(id){if(confirm('Delete this cashier?')){await api('/users/'+id,'DELETE');loadUsers()}}
+async function saveP(id){const p=P.find(x=>x.id==id);await api('/products/'+id,'PUT',{...p,name:$('n'+id).value,cost:+$('c'+id).value,price:+$('pr'+id).value,threshold:+$('t'+id).value});alert('Saved');load()}
+async function removeStock(){await api('/stock-adjust','POST',{product_id:+$('r-prod').value,qty:+$('r-qty').value,reason:$('r-why').value});$('r-qty').value=$('r-why').value='';await load();loadLow()}
+let P=[],S=[],cart=[];
+const esc=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+// in-page popup instead of the native alert (native alerts make the caret disappear in Electron)
+window.alert=m=>{const prev=document.activeElement,d=document.createElement('div');d.className='msg';
+ d.innerHTML='<div class="msgbox"><div style="white-space:pre-line;margin-bottom:12px">'+esc(m)+'</div><button class="a">OK</button></div>';
+ const b=d.querySelector('button');b.onclick=()=>{d.remove();if(prev&&prev.focus&&document.body.contains(prev))prev.focus()};document.body.appendChild(d);b.focus()};
+['confirm','prompt'].forEach(n=>{const o=window[n].bind(window);window[n]=(...a)=>{const r=o(...a);window.refocus&&window.refocus();return r}});
+window.addEventListener('afterprint',()=>setTimeout(()=>window.refocus&&window.refocus(),100));
+const tabs={billing:'Billing',refund:'Refund',products:'Items',stock:'Stock & Alerts',suppliers:'Suppliers',reports:'Reports',daily:'Daily Sales',buys:'Purchases',refs:'Refund Log',users:'Users',backup:'Backup'};
+function show(k){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id=='t-'+k));
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.id=='b-'+k));
+ if(k=='users')loadUsers();if(k=='daily')loadDaily();if(k=='buys')loadBuys();if(k=='refs')loadRefs();if(k=='backup')loadBackup();if(k=='reports')loadReport(); if(k=='stock')loadLow(); if(k=='billing')$('code').focus();}
+async function load(){P=await api('/products');if(ROLE!='admin')return;S=await api('/suppliers');
+ const so='<option value="">-- supplier --</option>'+S.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+ $('p-sup').innerHTML=so;$('s-sup').innerHTML=so;
+ $('s-prod').innerHTML=$('r-prod').innerHTML=P.map(p=>`<option value="${p.id}">${p.code} - ${p.name}</option>`).join('');
+ $('plist').innerHTML=P.map(p=>`<tr class="${p.stock<=p.threshold?'warn':''}"><td>${p.code}</td><td><input id="n${p.id}" value="${p.name.replace(/"/g,'&quot;')}" style="width:130px"></td><td>${p.gender} ${p.form}</td><td>${p.unit}</td><td><input id="c${p.id}" type="number" step="0.01" value="${+p.cost.toFixed(2)}" style="width:80px"></td><td><input id="pr${p.id}" type="number" step="0.01" value="${p.price}" style="width:80px"></td><td>${p.stock}</td><td><input id="t${p.id}" type="number" value="${p.threshold}" style="width:60px"></td><td>${p.supplier||''}</td><td><button onclick="saveP(${p.id})">Save</button> <button onclick="delP(${p.id})">Delete</button></td></tr>`).join('');
+ $('ulist').innerHTML=S.map(s=>`<tr><td>${s.name}</td><td>${s.phone||''}</td><td>${s.address||''}</td><td><button onclick="editSup(${s.id})">Edit</button> <button onclick="delSup(${s.id})">Delete</button></td></tr>`).join('');}
+async function addProduct(){await api('/products','POST',{code:$('p-code').value,name:$('p-name').value,gender:$('p-gender').value,form:$('p-form').value,
+ unit:$('p-unit').value,cost:+$('p-cost').value,price:+$('p-price').value,threshold:+$('p-th').value||5,supplier_id:$('p-sup').value||null});load()}
+async function addSupplier(){await api('/suppliers','POST',{name:$('u-name').value,phone:$('u-phone').value,address:$('u-addr').value});load()}
+async function addStock(){await api('/purchases','POST',{product_id:+$('s-prod').value,supplier_id:$('s-sup').value||null,qty:+$('s-qty').value,cost:+$('s-cost').value});await load();loadLow()}
+async function loadLow(){const l=await api('/low-stock');$('low').innerHTML=l.map(x=>`<tr class="warn"><td>${x.name}</td><td>${x.stock} ${x.unit}</td><td>${x.threshold}</td><td>${x.supplier||'-'}</td><td>${x.supplier_phone||''}</td></tr>`).join('')||'<tr><td colspan=5>All good</td></tr>'}
+$('code').addEventListener('keydown',e=>{if(e.key!='Enter')return;const v=e.target.value.toLowerCase();
+ const p=P.find(x=>x.code.toLowerCase()==v)||P.find(x=>x.name.toLowerCase().includes(v));
+ if(!p)return alert('Not found');const c=cart.find(x=>x.p.id==p.id);
+ if(c)c.qty++;else cart.push({p,qty:1,price:p.price,discount:0});e.target.value='';drawCart()});
+function drawCart(){let sub=0,d=0;$('cart').innerHTML=cart.map((c,i)=>{sub+=c.qty*c.price;d+=c.discount;
+ return `<tr><td>${c.p.code}</td><td>${c.p.name} (${c.p.unit})</td>
+ <td><input type="number" step="${c.p.unit=='meter'?'0.01':'1'}" value="${c.qty}" style="width:70px" onchange="setQty(${i},this.value)"></td>
+ <td>${c.price}</td><td><input type="number" value="${c.discount}" style="width:70px" onchange="cart[${i}].discount=+this.value;drawCart()"></td>
+ <td>${(c.qty*c.price-c.discount).toFixed(2)}</td><td><button onclick="cart.splice(${i},1);drawCart()">x</button></td></tr>`}).join('');
+ $('sub').textContent=sub.toFixed(2);$('disc').textContent=d.toFixed(2);$('tot').textContent=(sub-d).toFixed(2);
+ const ch=(+$('paid').value||0)-(sub-d);$('chg').textContent=ch>0?ch.toFixed(2):'0'}
+$('paid').oninput=drawCart;
+async function checkout(){if(!cart.length)return;
+ const due=+$('tot').textContent,pay=+$('paid').value;
+ if(!$('paid').value||Math.round(pay*100)<Math.round(due*100)){alert('Amount paid ('+(pay||0)+') is less than the payable amount ('+due.toFixed(2)+').\nEnter the full amount in the Paid box.');$('paid').focus();return}
+const r=await api('/sales','POST',{paid:+$('paid').value,
+ items:cart.map(c=>({product_id:c.p.id,qty:c.qty,price:c.price,discount:c.discount}))});
+ alert('Bill #'+r.id+' saved. Total: '+r.total.toFixed(2));cart=[];$('paid').value='';drawCart();load();printBill(r.id)}
+document.addEventListener('keydown',e=>{if(e.key=='F9'){e.preventDefault();checkout()}});
+async function loadReport(){const r=await api('/report?period='+$('period').value);
+ const box=(t,v,c='')=>`<div class="box" style="flex:1">${t}<div class="big ${c}">${v.toFixed(2)}</div></div>`;
+ $('rep').innerHTML=box('Sales (after refunds)',r.revenue)+box('Cost of goods',r.cogs)+box('Discounts given',r.discounts)+box('Refunds',r.refunds)+box(r.profit>=0?'Net profit':'Net loss',r.profit,r.profit<0?'neg':'');
+ $('top').innerHTML=r.top.map(t=>`<li>${t.name} - ${t.qty}</li>`).join('')}
+const rg=p=>'?from='+$(p+'-from').value+'&to='+$(p+'-to').value;
+const sum=a=>a.reduce((t,x)=>t+x,0).toFixed(2);
+async function loadDaily(){const d=await api('/report/daily'+rg('d'));
+ $('daily').innerHTML=d.map(x=>`<tr><td>${x.day}</td><td>${x.bills}</td><td>${x.sales}</td><td>${x.refunds}</td><td>${x.net}</td><td>${x.cost}</td></tr>`).join('')||'<tr><td colspan=6>No sales in this range</td></tr>';
+ $('d-sum').textContent='Total net sales: '+sum(d.map(x=>x.net))}
+async function loadBuys(){const b=await api('/report/purchases'+rg('b'));
+ $('buys').innerHTML=b.map(x=>`<tr><td>${x.day}</td><td>${x.item}</td><td>${x.qty} ${x.unit}</td><td>${x.cost.toFixed(2)}</td><td>${x.amount}</td><td>${x.supplier||''}</td></tr>`).join('')||'<tr><td colspan=6>No purchases in this range</td></tr>';
+ $('b-sum').textContent='Total bought: '+sum(b.map(x=>x.amount))}
+async function loadRefs(){const f=await api('/report/refunds'+rg('r'));
+ $('refs').innerHTML=f.map(x=>`<tr><td>${x.day}</td><td>${x.bill}</td><td>${x.item}</td><td>${x.qty} ${x.unit}</td><td>${x.amount}</td><td>${x.user}</td></tr>`).join('')||'<tr><td colspan=6>No refunds in this range</td></tr>';
+ $('r-sum').textContent='Total refunded: '+sum(f.map(x=>x.amount))}
+async function loadBackup(){const b=await api('/backup');$('bk-dir').value=b.dir;$('bk-local').textContent=b.local;
+ $('bk-last').textContent=b.last||'never';if(!window.pickFolder)$('bk-pick').style.display='none'}
+async function pickDir(){const d=await window.pickFolder();if(d)$('bk-dir').value=d}
+async function saveBk(){const r=await api('/backup','PUT',{dir:$('bk-dir').value});alert('Done.\n'+r.last);loadBackup();checkBackup()}
+async function runBk(){const r=await api('/backup/run','POST');alert(r.last);loadBackup();checkBackup()}
+async function checkBackup(){const b=await api('/backup'),x=$('banner');
+ const m=!b.dir?'Cloud backup is not set up yet. Open the Backup tab and choose a Google Drive / OneDrive / Dropbox folder.':(b.last.includes('FAILED')?'The last backup had a problem. Open the Backup tab to check.':'');
+ x.textContent=m?'⚠ '+m:'';x.style.display=m?'block':'none'}
+function setQty(i,v){const c=cart[i],q=+v;
+ if(!(q>0)||(c.p.unit!='meter'&&!Number.isInteger(q)))alert(c.p.unit=='meter'?'Enter a quantity above 0':'Pieces must be a whole number (1, 2, 3...)');else c.qty=q;drawCart()}
+async function delP(id){const p=P.find(x=>x.id==id);if(confirm('Delete '+p.name+'?\nItems that already have sales/stock history are archived (hidden), not erased.')){
+ const r=await api('/products/'+id,'DELETE');alert(r.archived?'Item archived (history kept).':'Item deleted.');load()}}
+async function editSup(id){const s=S.find(x=>x.id==id);const name=prompt('Name',s.name);if(name===null)return;
+ const phone=prompt('Phone',s.phone||'');if(phone===null)return;const address=prompt('Address',s.address||'');if(address===null)return;
+ await api('/suppliers/'+id,'PUT',{name,phone,address});load()}
+async function delSup(id){if(confirm('Delete this supplier? Items linked to it will show no supplier.')){await api('/suppliers/'+id,'DELETE');load()}}
+async function saveShop(){await api('/shop','PUT',{name:$('shop-name').value});alert('Saved')}
+function printHtml(x){$('receipt').innerHTML=x;window.print()}
+async function printBill(id){const s=await api('/sales/'+id),shop=(await api('/shop')).name;let sub=0;
+ const R='style="text-align:right"';
+ const rows=s.items.map(i=>{sub+=i.qty*i.price;return `<tr><td>${i.name}</td><td ${R}>${i.qty}</td><td ${R}>${i.price}</td><td ${R}>${i.discount.toFixed(2)}</td><td ${R}>${(i.qty*i.price-i.discount).toFixed(2)}</td></tr>`}).join('');
+ const paid=s.paid||0,line=(a,b,bold)=>`<tr><td colspan="3"></td><td ${R}>${bold?'<b>'+a+'</b>':a}</td><td ${R}>${bold?'<b>'+b+'</b>':b}</td></tr>`;
+ printHtml(`<div style="text-align:center"><b>${shop}</b><br>Bill #${s.id}<br>${s.date}<br>Cashier: ${s.cashier||''}</div><hr>
+ <table><thead><tr><th>Item</th><th ${R}>Qty</th><th ${R}>Price</th><th ${R}>Disc</th><th ${R}>Total</th></tr></thead><tbody>${rows}</tbody></table><hr>
+ <table>${line('Sub total',sub.toFixed(2))}${line('Discount',s.discount.toFixed(2))}${line('TOTAL',s.total.toFixed(2),1)}${line('Paid',paid.toFixed(2))}${line('Change',Math.max(paid-s.total,0).toFixed(2))}</table><hr><div style="text-align:center">Thank you!</div>`)}
+let RB=null;
+async function loadBill(){const id=+$('rf-bill').value;if(!id)return;RB=await api('/sales/'+id);
+ $('rf-area').innerHTML=`<div class="box">Bill #${RB.id} - ${RB.date} - Total ${RB.total.toFixed(2)} <button class="a" onclick="printBill(${RB.id})">Print receipt</button></div>
+ <table><thead><tr><th>Item</th><th>Sold</th><th>Already refunded</th><th>Refund qty</th></tr></thead><tbody>${RB.items.map(i=>`<tr><td>${i.name}</td><td>${i.qty} ${i.unit}</td><td>${i.refunded}</td>
+ <td><input id="rq${i.id}" type="number" value="0" style="width:80px" ${i.qty-i.refunded<=0?'disabled':''}></td></tr>`).join('')}</tbody></table><br><button class="a" onclick="doRefund()">Process refund</button>`}
+async function doRefund(){const items=RB.items.map(i=>({sale_item_id:i.id,qty:+$('rq'+i.id).value||0})).filter(x=>x.qty>0);
+ const r=await api('/refunds','POST',{sale_id:RB.id,items}),shop=(await api('/shop')).name;
+ alert('Refund done. Give the customer: '+r.total.toFixed(2));
+ const rows=items.map(x=>{const i=RB.items.find(q=>q.id==x.sale_item_id);return `<tr><td>${i.name}</td><td style="text-align:right">${x.qty}</td></tr>`}).join('');
+ const billId=RB.id;$('rf-area').innerHTML='';$('rf-bill').value='';RB=null;load();
+ printHtml(`<div style="text-align:center"><b>${shop}</b><br>REFUND (Bill #${billId})<br>${new Date().toLocaleString()}<br>By: ${UN}</div><hr><table>${rows}</table><hr><b>Refund amount: ${r.total.toFixed(2)}</b>`)}
+function init(){if(!T){$('login').style.display='flex';return}
+ $('login').style.display='none';$('who').textContent=UN+' ('+ROLE+')';
+ $('nav').innerHTML=Object.entries(tabs).filter(([k])=>ROLE=='admin'||k=='billing'||k=='refund').map(([k,v])=>`<button id="b-${k}" onclick="show('${k}')">${v}</button>`).join('');
+ cart=[];drawCart();load();show('billing');$('banner').style.display='none';if(ROLE=='admin')checkBackup()}
+init();
+</script></body></html>

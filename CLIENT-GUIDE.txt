@@ -1,0 +1,12 @@
+GARMENTS POS - SHOP GUIDE
+1. Install "Garments POS Setup.exe". Open "Garments POS" from the Desktop.
+2. First login: admin / admin123. Change it immediately (Users tab). Set the shop name there too.
+3. Setup order: Suppliers -> Items -> Stock & Alerts (receive stock). Then create cashier accounts (Users tab).
+4. Cashiers see only Billing and Refund. Admin sees everything.
+5. Other counters: open a browser at http://<main-PC-IP>:3000 (main PC must be on and the app open).
+6. BACKUP: copy  C:\Users\<name>\AppData\Roaming\Garments POS\shop.db  to a USB/cloud weekly.
+7. Forgot admin password? Contact your developer.
+
+BACKUP (important)
+Admin > Backup tab: choose a folder that syncs to the cloud (Google Drive for desktop / OneDrive / Dropbox).
+The app then backs up automatically every 3 hours. Restore steps are written on the same tab.
